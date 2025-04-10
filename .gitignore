@@ -178,3 +178,6 @@ chroma_db/
 
 # sub repo data
 repo_data/
+
+# Cursor
+.cursorrules
