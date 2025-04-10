@@ -181,3 +181,6 @@ repo_data/
 
 # Cursor
 .cursorrules
+
+# MCP
+mcp_config.json
