@@ -63,12 +63,64 @@ poetry install
 docker-compose up --build
 ```
 
+## Docker를 사용한 실행 방법
+
+이 프로젝트는 Docker를 사용하여 쉽게 실행할 수 있습니다. Docker와 Docker Compose가 설치되어 있어야 합니다.
+
+### 환경 변수 설정
+
+`.env` 파일을 프로젝트 루트 디렉토리에 생성하고 다음과 같이 필요한 환경 변수를 설정합니다:
+
+```
+OPENAI_API_KEY=your_openai_api_key
+FASTMCP_HOST=0.0.0.0
+FASTMCP_PORT=8000
+FASTMCP_DEBUG=true
+FASTMCP_TRANSPORT=sse
+```
+
+### Docker Compose로 실행하기
+
+다음 명령어를 사용하여 프로젝트를 빌드하고 실행합니다:
+
+```bash
+# 이미지 빌드 및 컨테이너 시작
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
+
+# 컨테이너 중지
+docker-compose down
+```
+
+### 단독 Docker 컨테이너로 실행하기
+
+Docker Compose 없이 직접 Docker 명령어를 사용하여 실행할 수도 있습니다:
+
+```bash
+# 이미지 빌드
+docker build -t git-context-mcp-forge:latest .
+
+# 컨테이너 실행
+docker run -d --name git-context-mcp-forge \
+  -p 8000:8000 \
+  -v $(pwd)/chroma_db:/app/chroma_db \
+  -v $(pwd)/.env:/app/.env \
+  --env-file .env \
+  git-context-mcp-forge:latest
+```
+
+### 서비스 접속
+
+서비스가 실행되면 다음 URL로 접속할 수 있습니다:
+- MCP 서버: http://localhost:8000
+
 ## 환경 변수
 
 `.env` 파일에 다음 환경 변수를 설정하세요:
 
 - `OPENAI_API_KEY`: OpenAI API 키
-- `GITHUB_TOKEN`: GitHub API 토큰 (선택 사항, 비공개 저장소 접근 시 필요)
 
 ## 사용 방법
 
