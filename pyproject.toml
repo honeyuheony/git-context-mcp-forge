@@ -14,19 +14,15 @@ dependencies = [
     "langchain-openai>=0.3,<0.4",
     "langchain-text-splitters>=0.3,<0.4",
     "langchain-chroma>=0.1,<0.2",
-    
-    # MCP 관련 패키지
-    "fastmcp>=0.4.1,<0.5.0",
-    
     # 임베딩 및 벡터 저장소
     "chromadb>=0.4.24,<0.5.0",
     "openai>=1,<2",
-    
     # 유틸리티 패키지
     "python-dotenv>=1.0.1,<1.1.0",
     "chardet>=5.0.0,<6.0.0",
     "gitpython>=3.1.30,<3.2.0",
     "pydantic>=2.0.0,<3.0.0",
+    "mcp[cli]>=1.6.0",
 ]
 
 [build-system]
