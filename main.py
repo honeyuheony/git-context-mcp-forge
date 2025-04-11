@@ -20,9 +20,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 프로젝트 루트 디렉토리 추가
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 # MCP 서버 도움말 메시지
 HELP_MESSAGE = """
 MCP 도구를 사용하기 위해서는 다음과 같이 질문하시면 됩니다:
