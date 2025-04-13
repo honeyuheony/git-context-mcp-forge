@@ -10,8 +10,8 @@ from typing import Dict, Any, List
 import logging
 import inspect
 from functools import wraps
-from src.services.repository_service import clone_repository
-from src.services.rag_service import search_documents
+from src.application.repository_service import clone_repository
+from src.application.rag_service import search_documents
 from src.mcp.formatters import format_repo_context, format_search_results
 
 # 로깅 설정

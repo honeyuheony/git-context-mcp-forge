@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from src.modules.code_loaders import MultiLanguageDocumentLoader
 from src.modules.code_splitter import MultiLanguageDocumentSplitter
 from src.modules.repo_manage import clone_repo_url, remove_repository
-from src.services.rag_service import get_document_embedder
+from src.application.rag_service import get_document_embedder
 
 # 환경 변수 로드
 load_dotenv()
