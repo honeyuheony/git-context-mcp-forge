@@ -2,6 +2,7 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
     Language
 )
+from langchain_core.documents import Document
 from typing import Dict, List
 import logging
 import sys
@@ -131,7 +132,7 @@ class MultiLanguageDocumentSplitter:
                 chunk_overlap=self.default_chunk_overlap
             )
 
-    def split_documents(self, documents_by_language: Dict[str, List]) -> List:
+    def split_documents(self, documents_by_language: Dict[str, List]) -> List[Document]:
         """
         언어별 문서를 분할합니다.
         
@@ -149,28 +150,28 @@ class MultiLanguageDocumentSplitter:
                 split_docs = splitter.split_documents(documents)
                 
                 self.logger.info(f"{language}: {len(documents)}개 문서를 {len(split_docs)}개로 분할 완료")
-                all_split_documents.extend(split_docs)
+                all_split_documents = all_split_documents + split_docs
                 
             except Exception as e:
-                self.logger.error(f"{language} 문서 분할 중 오류 발생: {str(e)}")
+                self.logger.error(f"{language} 문서 분할 중 오류 발생: {str(e)}", exc_info=True)
                 continue
         
         self.logger.info(f"총 {len(all_split_documents)}개의 분할된 문서 생성 완료")
         return all_split_documents
 
 def main():
-    # 예시 사용법
-    from code_loaders import MultiLanguageDocumentLoader
-    import os
+    from langchain_core.documents import Document
     
-    # test_code 디렉토리 경로 설정
-    test_dir = os.path.join(os.getcwd(), 'test_code')
+    # 테스트 문서
+    documents = {
+        'PYTHON': [
+            Document(page_content="Hello, world!")
+        ],
+        'CPP': [
+            Document(page_content="Hello, world!")
+        ]
+    }
     
-    # 문서 로더 초기화 및 로드
-    loader = MultiLanguageDocumentLoader(test_dir)
-    documents = loader.load_documents()
-    
-    # 문서 분할기 초기화 및 분할
     splitter = MultiLanguageDocumentSplitter(chunk_size=1000, chunk_overlap=200)
     split_documents = splitter.split_documents(documents)
     
@@ -185,5 +186,5 @@ def main():
         logger.info(split_documents[0].page_content[:200] + "..." if len(split_documents[0].page_content) > 200 else split_documents[0].page_content)
         logger.info("-" * 40)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

@@ -5,33 +5,34 @@
 from typing import List, Dict, Any
 from langchain_core.documents import Document
 
+# Todo
+def format_repo_context(repo_url: str) -> str:
+    # """
+    # 저장소 분석 결과를 마크다운 형식으로 포맷팅합니다.
 
-def format_repo_context(repo_info: Dict[str, Any]) -> str:
-    """
-    저장소 분석 결과를 마크다운 형식으로 포맷팅합니다.
+    # Args:
+    #     repo_info: 저장소 분석 정보를 담은 사전
 
-    Args:
-        repo_info: 저장소 분석 정보를 담은 사전
+    # Returns:
+    #     마크다운 형식의 저장소 분석 결과
+    # """
+    # markdown_result = f"""
+    # ## 저장소 분석 결과
 
-    Returns:
-        마크다운 형식의 저장소 분석 결과
-    """
-    markdown_result = f"""
-    ## 저장소 분석 결과
+    # ### 기본 정보
+    # - **저장소 URL**: {repo_info['repository_url']}
+    # - **총 파일 수**: {repo_info['summary']['total_files']}
+    # - **총 청크 수**: {repo_info['summary']['document_chunks']}
 
-    ### 기본 정보
-    - **저장소 URL**: {repo_info['repository_url']}
-    - **총 파일 수**: {repo_info['summary']['total_files']}
-    - **총 청크 수**: {repo_info['summary']['document_chunks']}
+    # ### 저장소 구조
+    # - **디렉토리 수**: {len(repo_info['structure']['directories'])}
+    # - **사용 언어**: {', '.join(repo_info['structure']['languages'])}
 
-    ### 저장소 구조
-    - **디렉토리 수**: {len(repo_info['structure']['directories'])}
-    - **사용 언어**: {', '.join(repo_info['structure']['languages'])}
-
-    ### README 내용
-    {repo_info['readme']}
-    """
-    return markdown_result
+    # ### README 내용
+    # {repo_info['readme']}
+    # """
+    # return markdown_result
+    ...
 
 
 def format_search_results(docs: List[Document]) -> str:

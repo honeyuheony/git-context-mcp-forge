@@ -9,8 +9,17 @@ import logging
 import sys
 import os
 from typing import Dict, Any, List
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 from src.mcp.tools import repo_to_rag, rag_to_context
+
+# 환경 변수 로드
+load_dotenv()
+
+# GitHub 토큰 검사
+github_token = os.getenv("GITHUB_TOKEN")
+if not github_token:
+    print("경고: GITHUB_TOKEN 환경 변수가 설정되지 않았습니다. GitHub API 요청이 제한될 수 있습니다.")
 
 # 로깅 설정
 logging.basicConfig(

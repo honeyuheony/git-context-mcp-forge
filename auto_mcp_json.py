@@ -18,9 +18,8 @@ def get_env_variables():
 
     required_vars = [
         "OPENAI_API_KEY",
+        "GITHUB_TOKEN"
     ]
-
-    config_vars = {"DEFAULT_TOP_K": "5"}
 
     env_dict = {}
 
@@ -28,8 +27,6 @@ def get_env_variables():
         value = os.getenv(var)
         if value:
             env_dict[var] = value
-
-    env_dict.update(config_vars)
 
     return env_dict
 
@@ -54,13 +51,13 @@ def create_mcp_json():
     else:  # Mac, Ubuntu etc
         python_path = str(project_root / ".venv" / "bin" / "python")
 
-    server_script = project_root / "mcp_server.py"
+    server_script = project_root / "main.py"
 
     env_vars = get_env_variables()
 
     config = {
         "mcpServers": {
-            "team1-learnathon-mcp": {
+            "git-context-mcp-forge": {
                 "command": python_path,
                 "args": [str(server_script)],
                 "env": env_vars,
