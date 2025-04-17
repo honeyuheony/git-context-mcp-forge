@@ -23,6 +23,7 @@ dependencies = [
     "gitpython>=3.1.30,<3.2.0",
     "pydantic>=2.0.0,<3.0.0",
     "mcp[cli]>=1.6.0",
+    "ipython>=9.1.0",
 ]
 
 [build-system]

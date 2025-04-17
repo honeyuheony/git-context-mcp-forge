@@ -7,23 +7,29 @@ MCP 도구 모듈: ModelContextProtocol(MCP)의 도구를 정의합니다.
 """
 
 from typing import Dict, Any, List
-import logging
 from src.application.rag_service import search_documents
 from src.mcp.formatters import format_repo_context, format_search_results
 from src.modules.code_loader import load_documents
 from src.modules.github import GitHubClient
 from src.modules.code_splitter import MultiLanguageDocumentSplitter
 from src.modules.rag import DocumentEmbedder
+from src.llm_workflows.state import RepositoryToVectorDBState
+from src.models.git_repository import RepositoryInfo
+from src.llm_workflows.graphs.repo_to_vectordb_graph import create_repo_to_vectordb_graph
+from src.config.log_config import Logger
+from langgraph.graph.state import CompiledStateGraph
 
-# 로깅 설정
-logger = logging.getLogger(__name__)
+
+logger = Logger()
 
 # 전역 변수
 client = GitHubClient()
 embedder = DocumentEmbedder()
 splitter = MultiLanguageDocumentSplitter()
 
-async def repo_to_rag(repo_url: str) -> str:
+
+
+async def repo_to_rag(repo_url: str) -> RepositoryInfo:
     """
     GITHUB Repository ⇒ Embedding and Store in VectorDB
     주어진 GitHub 저장소의 소스 코드를 임베딩하여 VectorDB에 저장합니다.
@@ -32,20 +38,39 @@ async def repo_to_rag(repo_url: str) -> str:
     Parameters:
         repo_url: GitHub 저장소 URL
     """
-    logger.info(f"저장소 클론 및 임베딩 요청: {repo_url}")
-    try:
-        # 저장소 처리
-        processed_files = client.process_repository(repo_url)
-        documents = load_documents(repo_url, processed_files)
-        split_documents = splitter.split_documents(documents)
-        # 문서 저장
-        embedder.add_documents(split_documents)
-        # result = format_repo_context(repo_url)
-        logger.info(f"저장소 처리 완료: {repo_url}")
-        return "저장소 처리 완료"
-    except Exception as e:
-        logger.error(f"저장소 처리 중 오류 발생: {str(e)}", exc_info=True)
-        return f"저장소 처리 중 오류가 발생했습니다: {str(e)}"
+    state = RepositoryToVectorDBState(
+        repo_info=RepositoryInfo(repo_url=repo_url)
+    )
+    workflow: CompiledStateGraph = create_repo_to_vectordb_graph()
+    result: RepositoryInfo = workflow.invoke(state, output_keys=["repo_info"])
+    logger.info(f"repo_to_rag result: {result}")
+
+    return result
+    
+
+# async def repo_to_rag(repo_url: str) -> str:
+#     """
+#     GITHUB Repository ⇒ Embedding and Store in VectorDB
+#     주어진 GitHub 저장소의 소스 코드를 임베딩하여 VectorDB에 저장합니다.
+#     이 과정은 벡터 기반 코드 검색 및 검색 기반 질문 응답을 가능하게 합니다.
+
+#     Parameters:
+#         repo_url: GitHub 저장소 URL
+#     """
+#     logger.info(f"저장소 클론 및 임베딩 요청: {repo_url}")
+#     try:
+#         # 저장소 처리
+#         processed_files = client.process_repository(repo_url)
+#         documents = load_documents(repo_url, processed_files)
+#         split_documents = splitter.split_documents(documents)
+#         # 문서 저장
+#         embedder.add_documents(split_documents)
+#         # result = format_repo_context(repo_url)
+#         logger.info(f"저장소 처리 완료: {repo_url}")
+#         return "저장소 처리 완료"
+#     except Exception as e:
+#         logger.error(f"저장소 처리 중 오류 발생: {str(e)}", exc_info=True)
+#         return f"저장소 처리 중 오류가 발생했습니다: {str(e)}"
 
 
 async def rag_to_context(query: str) -> str:
