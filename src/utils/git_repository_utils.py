@@ -23,7 +23,6 @@ class GitRepositoryUtils(ABC):
         pass
     
     @staticmethod
-    @abstractmethod
     def _is_valuable_text(text: str, file_path: str) -> bool:
         """
         텍스트가 가치 있는지 판단합니다.
