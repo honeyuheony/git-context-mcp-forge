@@ -51,13 +51,9 @@ def format_search_results(docs: List[Document]) -> str:
     markdown_results = "## 검색 결과\n\n"
 
     for i, doc in enumerate(docs, 1):
-        source = doc.metadata.get("source", "알 수 없는 출처")
-        page = doc.metadata.get("page", None)
-        page_info = f" (페이지: {page + 1})" if page is not None else ""
-
-        markdown_results += f"### 결과 {i}{page_info}\n\n"
+        markdown_results += f"### 결과 \n\n"
         markdown_results += f"{doc.page_content}\n\n"
-        markdown_results += f"출처: {source}\n\n"
+        markdown_results += f"출처: {doc.metadata.repo_url} : {doc.metadata.path}\n\n"
         markdown_results += "---\n\n"
 
     return markdown_results 
