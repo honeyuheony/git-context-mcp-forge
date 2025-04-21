@@ -35,7 +35,7 @@ async def rag_to_context(query: str) -> str:
     """
     state = RagToContextState(query=query)
     workflow: CompiledStateGraph = create_rag_to_context_graph()
-    result: RagToContextState = workflow.invoke(state)
+    result: RagToContextState = workflow.invoke(state, output_keys=["retrieved_documents"])
     logger.info(f"rag_to_context result: {result}")
 
     return result
