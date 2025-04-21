@@ -177,7 +177,7 @@ class GitHubRepositoryUtils(GitRepositoryUtils):
         """
         try:
             start_time = time.time()
-            logger.info(f"저장소 처리 시작: {repo_url}")
+            logger.debug(f"저장소 처리 시작: {repo_url}")
             
             # 저장소 정보 가져오기
             repo_info = cls.parse_repo_url(repo_url)
@@ -229,7 +229,7 @@ class GitHubRepositoryUtils(GitRepositoryUtils):
                 
                 # 로깅
                 if len(all_files) % 20 == 0 and all_files:
-                    logger.info(f"처리 진행: {len(all_files)}개 파일, {len(processed_dirs)}개 디렉토리, 남은 디렉토리: {len(dirs_queue)}개")
+                    logger.debug(f"처리 진행: {len(all_files)}개 파일, {len(processed_dirs)}개 디렉토리, 남은 디렉토리: {len(dirs_queue)}개")
             
             elapsed_time = time.time() - start_time
             logger.info(f"저장소 처리 완료: {len(all_files)}개 파일 추출 (소요 시간: {elapsed_time:.2f}초)")

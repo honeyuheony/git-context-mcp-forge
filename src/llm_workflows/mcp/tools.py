@@ -1,4 +1,6 @@
+from typing import List, Any, Union
 from langgraph.graph.state import CompiledStateGraph
+from langchain_core.documents import Document
 from src.models.git_repository import RepositoryInfo
 from src.llm_workflows.state import RepositoryToVectorDBState, RagToContextState
 from src.llm_workflows.graphs.repo_to_vectordb_graph import create_repo_to_vectordb_graph
@@ -22,8 +24,10 @@ async def repo_to_rag(repo_url: str) -> RepositoryInfo:
         repo_info=RepositoryInfo(repo_url=repo_url)
     )
     workflow: CompiledStateGraph = create_repo_to_vectordb_graph()
-    result: RepositoryInfo = workflow.invoke(state, output_keys=["repo_info"])
-    logger.info(f"repo_to_rag result: {result}")
+    finish_state: dict[str, Any] = workflow.invoke(state)
+    result: RepositoryToVectorDBState = RepositoryToVectorDBState.model_validate(finish_state)
+    repo_info: RepositoryInfo = result.repo_info
+    logger.debug(f"repo_to_rag result: {repo_info}")
 
     return result
 
@@ -35,8 +39,11 @@ async def rag_to_context(query: str) -> str:
     """
     state = RagToContextState(query=query)
     workflow: CompiledStateGraph = create_rag_to_context_graph()
-    result: RagToContextState = workflow.invoke(state, output_keys=["retrieved_documents"])
-    logger.info(f"rag_to_context result: {result}")
+    finish_state: dict[str, Any] = workflow.invoke(state)
+    result: RagToContextState = RagToContextState.model_validate(finish_state)
+    retrieved_documents: List[Document] = result.retrieved_documents
+    for i, result in enumerate(retrieved_documents):
+        logger.debug(f"{i+1}번째 문서: \n내용 :\n{result.page_content[:100]}\n참조 경로:\n{result.metadata.get('path')}")
 
     return result
     
@@ -53,7 +60,7 @@ async def test_rag_to_context():
     """
     Test the rag_to_context function with a sample query.
     """
-    query = "git-context-mcp-forge 저장소에 대해 설명해줘"
+    query = "git-context-mcp-forge mcp 도구에서 제공하고 있는 기능을 설명해줘"
     result = await rag_to_context(query)
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ def add_documents(state: RepositoryToVectorDBState) -> RepositoryToVectorDBState
                 persist_directory="chroma_db"
             )
             chroma.add_documents(state.split_documents)
-            logger.info(f"문서 추가 완료: {len(state.split_documents)}개")
+            logger.info(f"벡터 DB에 문서 추가 완료: {len(state.split_documents)}개")
 
         return state
 

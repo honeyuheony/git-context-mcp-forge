@@ -98,7 +98,7 @@ def _create_language_parser(extension: str) -> Optional[LanguageParser]:
         
         # UNKNOWN이거나 지원되지 않는 언어는 기본 파서 사용
         if lang not in SUPPORTED_PARSER_LANGUAGES or lang == 'UNKNOWN':
-            logger.info(f"{lang}는 파서를 지원하지 않아 기본 파서로 처리됩니다.")
+            logger.debug(f"확장자 {extension}에 대한 언어 매핑이 없어 기본 파서로 처리됩니다.")
             return LanguageParser()
             
         parser_value = SUPPORTED_PARSER_LANGUAGES[lang]
@@ -176,5 +176,10 @@ def load_documents(processed_files: List[Dict[str, Any]]) -> Dict[str, List]:
             logger.error(f"문서 로드 중 오류 발생: {file['path']}, 오류: {str(e)}")
             # 오류가 발생해도 계속 진행
             continue
-    
+    for lang, documents in documents_by_language.items():
+        logger.debug(f"{lang} 언어 문서 개수: {len(documents)}")
+        for document in documents:
+            logger.debug(f"문서 내용: {document.page_content[:100]}")
+            logger.debug(f"문서 메타데이터: {document.metadata}")
+
     return documents_by_language

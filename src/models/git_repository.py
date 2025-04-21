@@ -10,7 +10,6 @@ class RepositoryInfo(BaseModel):
     repo_name: Annotated[str, Field(default="", description="저장소 이름")]
     branch: Annotated[str, Field(default="", description="브랜치 이름")]
 
-
 class CodeMetadata(BaseModel):
     """코드 메타데이터"""
 
