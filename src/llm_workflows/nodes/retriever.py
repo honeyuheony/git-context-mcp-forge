@@ -5,7 +5,6 @@ from langchain_core.documents import Document
 from src.llm_workflows.state import RagToContextState
 from src.config.log_config import Logger
 from src.utils.chroma_utils import ChromaUtils
-
 # 환경 변수 로드
 load_dotenv()
 
@@ -22,7 +21,7 @@ def search_documents(state: RagToContextState) -> RagToContextState:
     
     try:
         logger.debug(f"문서 검색 중: 쿼리='{query}', top_k={top_k}")
-        vectorstore: Chroma = ChromaUtils().get_vectorstore()
+        vectorstore: Chroma = ChromaUtils().get_code_documents_vectorstore()
         retriever = vectorstore.as_retriever(search_kwargs={"k": top_k})
         results: List[Document] = retriever.invoke(query)
         logger.debug(f"검색 결과: {len(results)}개 문서 찾음")

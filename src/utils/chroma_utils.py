@@ -1,9 +1,6 @@
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from src.config.log_config import Logger
-from functools import lru_cache
-from typing import List, Optional
-from langchain.schema import Document
 
 logger = Logger()
 
@@ -18,18 +15,20 @@ class ChromaUtils:
                 model="text-embedding-3-small",
                 dimensions=1536
             )
-            cls.instance.vectorstore = Chroma(
+            cls.instance.code_documents_vectorstore = Chroma(
                 collection_name="code_documents",
+                embedding_function=cls.instance.embeddings,
+                persist_directory="chroma_db"
+            )
+            cls.instance.hypothetical_questions_vectorstore = Chroma(
+                collection_name="hypothetical_questions",
                 embedding_function=cls.instance.embeddings,
                 persist_directory="chroma_db"
             )
         return cls.instance
     
-    def get_vectorstore(self) -> Chroma:
-        return self.vectorstore
-
-    def add_documents(self, documents: List[Document]) -> None:
-        self.vectorstore.add_documents(documents)
+    def get_code_documents_vectorstore(self) -> Chroma:
+        return self.code_documents_vectorstore
     
-    def search_documents(self, query: str, top_k: Optional[int] = None) -> List[Document]:
-        return self.vectorstore.similarity_search(query, k=top_k)
+    def get_hypothetical_questions_vectorstore(self) -> Chroma:
+        return self.hypothetical_questions_vectorstore
