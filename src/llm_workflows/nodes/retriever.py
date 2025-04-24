@@ -22,13 +22,38 @@ def search_documents(state: RagToContextState) -> RagToContextState:
     try:
         logger.debug(f"문서 검색 중: 쿼리='{query}', top_k={top_k}")
         vectorstore: Chroma = ChromaUtils().get_code_documents_vectorstore()
-        retriever = vectorstore.as_retriever(search_kwargs={"k": top_k})
-        results: List[Document] = retriever.invoke(query)
-        logger.debug(f"검색 결과: {len(results)}개 문서 찾음")
+        retriever = vectorstore.as_retriever(
+            search_type="similarity_score_threshold",
+            search_kwargs={"k": top_k, "score_threshold": 0.5}
+        )
+        code_results: List[Document] = retriever.invoke(query)
+        logger.debug(f"코드 검색 결과: {len(code_results)}개 문서 찾음")
+        if len(code_results) == 0:
+            logger.debug(f"코드 검색 결과가 없습니다. 가설 질문 검색 시도")
+            vectorstore: Chroma = ChromaUtils().get_hypothetical_questions_vectorstore()
+            retriever = vectorstore.as_retriever(
+                search_type="similarity_score_threshold",
+                search_kwargs={"k": top_k, "score_threshold": 0.5}
+            )
+            hypothetical_results: List[Document] = retriever.invoke(query)
+            logger.debug(f"가설 질문 검색 결과: {len(hypothetical_results)}개 문서 찾음")
 
-        state.retrieved_documents = results
+            if len(hypothetical_results) > 0:
+                search_path_list = []
+                for result in hypothetical_results:
+                    search_path_list.append(result.metadata["path"])
+
+                vectorstore: Chroma = ChromaUtils().get_code_documents_vectorstore()
+                retriever = vectorstore.as_retriever(
+                    search_type="similarity_score_threshold",
+                    search_kwargs={"k": top_k, "score_threshold": 0.5, "filter": {"path": {"in": search_path_list}}}
+                )
+                code_results: List[Document] = retriever.invoke(query)
+                logger.debug(f"코드 검색 재수행 결과: {len(code_results)}개 문서 찾음")
+
+        state.retrieved_documents = code_results + hypothetical_results
         return state
     
     except Exception as e:
-        logger.error(f"문서 검색 중 오류 발생: {str(e)}", exc_info=True)
+        logger.error(f"문서 검색 중 오류 발생: {str(e)}")
         raise

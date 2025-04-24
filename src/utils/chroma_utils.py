@@ -18,12 +18,12 @@ class ChromaUtils:
             cls.instance.code_documents_vectorstore = Chroma(
                 collection_name="code_documents",
                 embedding_function=cls.instance.embeddings,
-                persist_directory="chroma_db"
+                persist_directory="chroma_db/code_documents"
             )
             cls.instance.hypothetical_questions_vectorstore = Chroma(
                 collection_name="hypothetical_questions",
                 embedding_function=cls.instance.embeddings,
-                persist_directory="chroma_db"
+                persist_directory="chroma_db/hypothetical_questions"
             )
         return cls.instance
     

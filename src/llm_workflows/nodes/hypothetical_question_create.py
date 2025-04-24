@@ -32,17 +32,22 @@ def hypothetical_question_create(state: RepositoryToVectorDBState):
         }
     ]
 
-    question_prompt = ChatPromptTemplate.from_template(
-        """
-    다음 코드를 분석하고, 이 코드에 대해 다른 개발자들이 물어볼 만한 3개의 질문을 생성해주세요.
-    질문은 코드의 구현 방식, 설계 패턴, 최적화 방법, 오류 가능성 등에 초점을 맞춰주세요.
-
-    코드:
-    ```{language}
-    {code}
-    ```
-    """
-    )
+    question_prompt = ChatPromptTemplate.from_template("""
+        당신은 코드 분석 전문가입니다. 주어진 코드를 분석하고, 개발자들이 이 코드에 대해 물어볼 만한 다양한 질문을 생성해주세요.
+        
+        코드:
+        ```{language}
+        {code}
+        ```
+        
+        다음과 같은 다양한 카테고리의 질문을 5-8개 생성해주세요:
+        1. 구현방식: 코드가 어떻게 구현되었는지에 대한 질문
+        2. 설계패턴: 코드에 사용된 설계 패턴이나 아키텍처에 대한 질문
+        3. 최적화: 성능 최적화나 효율성에 대한 질문
+        4. 버그가능성: 잠재적인 버그나 오류 가능성에 대한 질문
+        5. 사용법: 코드를 어떻게 사용하는지에 대한 질문
+        6. 기능설명: 코드가 어떤 기능을 수행하는지에 대한 질문
+        """)
 
     hypothetical_query_chain = (
         {
